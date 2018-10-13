@@ -17,7 +17,7 @@ import { routes } from './app.routing.module';
     AppComponent, DEMOComponent
   ],
   imports     : [
-    BrowserModule,
+    BrowserModule.withServerTransition({appId: 'ngZorroAntdDoc'}),
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,

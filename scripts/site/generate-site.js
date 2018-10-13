@@ -13,10 +13,7 @@ const isSyncSpecific = target && (target !== 'init');
 // 创建site文件夹
 const showCasePath = path.resolve(__dirname, '../../site');
 
-if (!target) {
-  fs.removeSync(`${showCasePath}/src`);
-  fs.copySync(path.resolve(__dirname, '_site/src'), `${showCasePath}/src`);
-} else if (target === 'init') {
+if (!target || target === 'init') {
   fs.removeSync(`${showCasePath}`);
   fs.copySync(path.resolve(__dirname, '_site'), `${showCasePath}`);
 } else {

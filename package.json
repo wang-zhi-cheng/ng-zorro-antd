@@ -20,6 +20,8 @@
     "site": "node ./scripts/site/generate-site",
     "site:start": "node ./scripts/site/generate-site init && node ./scripts/site/generateColorLess && ng serve --port 0 --open",
     "site:init": "node ./scripts/site/generate-site init && node ./scripts/site/generateColorLess",
+    "site:ssr-build": "node --max_old_space_size=5120 ./node_modules/@angular/cli/bin/ng run ng-zorro-antd-doc:server",
+    "site:ssr-server": "node site/ssr/server.js",
     "schematic:demo": "node ./scripts/schematics/demo2schematics",
     "schematic:tsc": "tsc -p schematics/tsconfig.json",
     "schematic:build": "node ./scripts/schematics/set-theme.js && node ./scripts/schematics/set-version.js && npm run schematic:tsc && node ./scripts/schematics/copy-resources",
@@ -34,6 +36,7 @@
   },
   "dependencies": {
     "@angular/cdk": "^6.0.0",
+    "@angular/platform-server": "^6.1.10",
     "@ant-design/icons-angular": "0.0.1-alpha.1",
     "date-fns": "^1.29.0"
   },
@@ -54,6 +57,8 @@
     "@angular/platform-browser": "^6.0.0",
     "@angular/platform-browser-dynamic": "^6.0.0",
     "@angular/router": "^6.0.0",
+    "@nguniversal/express-engine": "^6.1.0",
+    "@nguniversal/module-map-ngfactory-loader": "^6.1.0",
     "@schematics/angular": "^0.6.0",
     "@stackblitz/sdk": "^1.1.1",
     "@types/fs-extra": "^5.0.4",
