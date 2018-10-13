@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { ROUTER_LIST } from '../../router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'nz-nav-bottom',
@@ -24,14 +25,14 @@ export class NzNavBottomComponent implements OnInit {
   index = 0;
   language = 'en';
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private location: Location) {
 
   }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        const url = window.location.pathname.slice(1);
+        const url = pathNameOf(this.location.path()).slice(1);
         this.language = this.router.url.split('/')[ this.router.url.split('/').length - 1 ].split('#')[ 0 ];
         const componentsList = ROUTER_LIST.components.reduce((pre, cur) => {
           return pre.concat(cur.children);
@@ -41,4 +42,8 @@ export class NzNavBottomComponent implements OnInit {
       }
     });
   }
+}
+
+function pathNameOf(path: string): string {
+  return path.replace(/^\w+:\/\/([-.\w]+).*$/, '$1');
 }

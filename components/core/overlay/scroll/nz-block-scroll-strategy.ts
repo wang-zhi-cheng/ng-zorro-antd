@@ -10,14 +10,14 @@ export class NzBlockScrollStrategy implements ScrollStrategy {
   attach(): void {}
 
   enable(): void {
-    this.renderer.setStyle(document.body, 'overflow', 'hidden');
+    this.renderer.setStyle(this.document.body, 'overflow', 'hidden');
     this.renderer.setStyle(this.document.body, 'padding-right', `${this.nzMeasureScrollbarService.scrollBarWidth}px`);
 
   }
 
   disable(): void {
-    this.renderer.removeStyle(document.body, 'overflow');
-    this.renderer.removeStyle(document.body, 'padding-right');
+    this.renderer.removeStyle(this.document.body, 'overflow');
+    this.renderer.removeStyle(this.document.body, 'padding-right');
   }
 
 }

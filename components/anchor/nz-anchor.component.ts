@@ -117,6 +117,9 @@ export class NzAnchorComponent implements OnDestroy, AfterViewInit {
   }
 
   private getTarget(): Element | Window {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
     return this.target || window;
   }
 

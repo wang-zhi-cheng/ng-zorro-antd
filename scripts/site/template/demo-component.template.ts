@@ -1,5 +1,6 @@
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { NzCodeBoxComponent } from '../share/nz-codebox/nz-codebox.component';
+import { Location } from '@angular/common';
 
 @Component({
   selector     : 'nz-demo-{{component}}',
@@ -10,8 +11,10 @@ export class {{componentName}} {
   expanded = false;
   @ViewChildren(NzCodeBoxComponent) codeBoxes: QueryList<NzCodeBoxComponent>;
 
+  constructor(private location: Location) {
+  }
   goLink(link: string) {
-    window.location.hash = link;
+    this.location.go(`#${link}`);
   }
 
   expandAllCode(): void {

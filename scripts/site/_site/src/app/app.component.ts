@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { IconDefinition } from '@ant-design/icons-angular';
@@ -6,6 +6,7 @@ import * as AllIcons from '@ant-design/icons-angular/icons';
 import { en_US, zh_CN, NzI18nService, NzIconService, NzMessageService } from 'ng-zorro-antd';
 import { environment } from '../environments/environment';
 import { ROUTER_LIST } from './router';
+import { DOCUMENT, Location } from '@angular/common';
 
 declare const docsearch: any;
 
@@ -21,7 +22,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   docsearch = null;
 
   get useDocsearch(): boolean {
-    return window && window.location.href.indexOf('/version') === -1;
+    return this.location.path().indexOf('/version') === -1;
   }
 
   language = 'zh';
@@ -44,7 +45,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.hide = !this.hide;
   }
 
-  constructor(private router: Router, private title: Title, private nzI18nService: NzI18nService, private msg: NzMessageService, private iconService: NzIconService) {
+  constructor(
+    private router: Router,
+    private title: Title,
+    private nzI18nService: NzI18nService,
+    private msg: NzMessageService,
+    private iconService: NzIconService,
+    @Inject(DOCUMENT) private document: Document,
+    private location: Location
+  ) {
     const antDesignIcons = AllIcons as {
       [key: string]: IconDefinition;
     };
@@ -62,9 +71,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   navigateToVersion(version) {
     if (version !== this.currentVersion) {
-      window.location.href = window.location.origin + `/version/` + version;
+      this.location.go(`/version/` + version);
     } else {
-      window.location.href = window.location.origin;
+      this.location.go('/');
     }
     this.currentVersion = version;
   }
@@ -99,7 +108,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
           const toc = this.router.parseUrl(this.router.url).fragment || '';
           if (toc) {
-            document.querySelector(`#${toc}`).scrollIntoView();
+            this.document.querySelector(`#${toc}`).scrollIntoView();
           }
         }, 200);
       }
@@ -123,8 +132,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         algoliaOptions: { hitsPerPage: 5, facetFilters: [`tags:${this.language}`] },
         transformData(hits) {
           hits.forEach((hit) => {
-            hit.url = hit.url.replace('ng.ant.design', location.host);
-            hit.url = hit.url.replace('https:', location.protocol);
+            hit.url = hit.url.replace('ng.ant.design', this.location.path().replace(/^\w+:\/\/([-.\w]+).*$/, '$1'));
+            hit.url = hit.url.replace('https:', this.location.path().replace(/^(\w+:).*$/, '$1'));
           });
           return hits;
         },
@@ -135,7 +144,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   @HostListener('document:keyup.s', ['$event'])
   onKeyUp(event: KeyboardEvent) {
-    if (this.useDocsearch && this.searchInput && this.searchInput.nativeElement && event.target === document.body) {
+    if (this.useDocsearch && this.searchInput && this.searchInput.nativeElement && event.target === this.document.body) {
       this.searchInput.nativeElement.focus();
     }
   }
@@ -143,11 +152,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   // region: color
   color = `#1890ff`;
   initColor() {
-    const node = document.createElement('link');
+    const node = this.document.createElement('link');
     node.rel = 'stylesheet/less';
     node.type = 'text/css';
     node.href = '/assets/color.less';
-    document.getElementsByTagName('head')[0].appendChild(node);
+    this.document.getElementsByTagName('head')[0].appendChild(node);
   }
   lessLoaded = false;
   changeColor(res: any) {
@@ -178,12 +187,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   loadScript(src: string) {
     return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
+      const script = this.document.createElement('script');
       script.type = 'text/javascript';
       script.src = src;
       script.onload = resolve;
       script.onerror = reject;
-      document.head.appendChild(script);
+      this.document.head.appendChild(script);
     });
   }
 

@@ -1,5 +1,6 @@
 import { Platform } from '@angular/cdk/platform';
-import { NgZone } from '@angular/core';
+import { Inject, NgZone } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 export class NzWaveRenderer {
 
@@ -12,7 +13,12 @@ export class NzWaveRenderer {
     return this.insertExtraNode ? 'ant-click-animating' : 'ant-click-animating-without-extra-node';
   }
 
-  constructor(private triggerElement: HTMLElement, private ngZone: NgZone, private insertExtraNode: boolean) {
+  constructor(
+    private triggerElement: HTMLElement,
+    private ngZone: NgZone,
+    private insertExtraNode: boolean,
+    @Inject(DOCUMENT) private document: Document
+  ) {
     const platform = new Platform();
     if (platform.isBrowser) {
       this.bindTriggerEvent();
@@ -46,8 +52,8 @@ export class NzWaveRenderer {
   }
 
   removeStyleAndExtraNode(): void {
-    if (this.styleForPseudo && document.body.contains(this.styleForPseudo)) {
-      document.body.removeChild(this.styleForPseudo);
+    if (this.styleForPseudo && this.document.body.contains(this.styleForPseudo)) {
+      this.document.body.removeChild(this.styleForPseudo);
       this.styleForPseudo = null;
     }
     if (this.insertExtraNode && this.triggerElement.contains(this.extraNode)) {
@@ -70,17 +76,17 @@ export class NzWaveRenderer {
 
     if (this.isValidColor(waveColor)) {
       if (!this.styleForPseudo) {
-        this.styleForPseudo = document.createElement('style');
+        this.styleForPseudo = this.document.createElement('style');
       }
 
       this.styleForPseudo.innerHTML =
         `[ant-click-animating-without-extra-node]:after { border-color: ${waveColor}; }`;
-      document.body.appendChild(this.styleForPseudo);
+      this.document.body.appendChild(this.styleForPseudo);
     }
 
     if (this.insertExtraNode) {
       if (!this.extraNode) {
-        this.extraNode = document.createElement('div');
+        this.extraNode = this.document.createElement('div');
       }
       this.extraNode.className = 'ant-click-animating-node';
       node.appendChild(this.extraNode);

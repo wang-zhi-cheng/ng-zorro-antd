@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
+  EventEmitter, Inject,
   Input,
   OnDestroy,
   OnInit,
@@ -16,6 +16,7 @@ import { NzScrollService } from '../core/scroll/nz-scroll.service';
 import { shallowEqual } from '../core/util/check';
 import { toNumber } from '../core/util/convert';
 import { throttleByAnimationFrameDecorator } from '../core/util/throttleByAnimationFrame';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector       : 'nz-affix',
@@ -44,12 +45,12 @@ export class NzAffixComponent implements OnInit, OnDestroy {
 
   @ViewChild('wrap') private wrap: ElementRef;
 
-  private _target: Element | Window = window;
+  private _target: Element | Window;
 
   @Input()
   set nzTarget(value: Element | Window) {
     this.clearEventListeners();
-    this._target = value || window;
+    this._target = value;
     this.setTargetEventListeners();
     this.updatePosition({});
   }
@@ -80,7 +81,12 @@ export class NzAffixComponent implements OnInit, OnDestroy {
 
   @Output() nzChange: EventEmitter<boolean> = new EventEmitter();
 
-  constructor(private scrollSrv: NzScrollService, private _el: ElementRef, private cd: ChangeDetectorRef) {
+  constructor(
+    private scrollSrv: NzScrollService,
+    private _el: ElementRef,
+    private cd: ChangeDetectorRef,
+    @Inject(DOCUMENT) private document: Document
+  ) {
   }
 
   ngOnInit(): void {
@@ -92,14 +98,20 @@ export class NzAffixComponent implements OnInit, OnDestroy {
 
   private setTargetEventListeners(): void {
     this.clearEventListeners();
+    if (typeof window === 'undefined') {
+      return;
+    }
     this.events.forEach((eventName: string) => {
-      this._target.addEventListener(eventName, this.updatePosition, false);
+      (this._target || window).addEventListener(eventName, this.updatePosition, false);
     });
   }
 
   private clearEventListeners(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
     this.events.forEach(eventName => {
-      this._target.removeEventListener(eventName, this.updatePosition, false);
+      (this._target || window).removeEventListener(eventName, this.updatePosition, false);
     });
   }
 
@@ -127,7 +139,7 @@ export class NzAffixComponent implements OnInit, OnDestroy {
     const scrollTop = this.scrollSrv.getScroll(target, true);
     const scrollLeft = this.scrollSrv.getScroll(target, false);
 
-    const docElem = window.document.body;
+    const docElem = this.document.body;
     const clientTop = docElem.clientTop || 0;
     const clientLeft = docElem.clientLeft || 0;
 
@@ -150,6 +162,10 @@ export class NzAffixComponent implements OnInit, OnDestroy {
   }
 
   private setAffixStyle(e: any, affixStyle: {}): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     const originalAffixStyle = this.affixStyle;
     const isWindow = this._target === window;
     if (e.type === 'scroll' && originalAffixStyle && affixStyle && isWindow) {
@@ -186,7 +202,10 @@ export class NzAffixComponent implements OnInit, OnDestroy {
 
   @throttleByAnimationFrameDecorator()
   updatePosition(e: any): void {
-    const targetNode = this._target;
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const targetNode = this._target || window;
     // Backwards support
     let offsetTop = this.nzOffsetTop;
     const scrollTop = this.scrollSrv.getScroll(targetNode, true);

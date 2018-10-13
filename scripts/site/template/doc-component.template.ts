@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Location } from '@angular/common';
 
 @Component({
   selector     : 'nz-doc-{{component}}-{{language}}',
@@ -6,7 +7,9 @@ import { Component } from '@angular/core';
   preserveWhitespaces: false
 })
 export class NzDoc{{componentName}}Component {
+  constructor(private location: Location) {
+  }
   goLink(link: string) {
-    window.location.hash = link;
+    this.location.go(`#${link}`);
   }
 }

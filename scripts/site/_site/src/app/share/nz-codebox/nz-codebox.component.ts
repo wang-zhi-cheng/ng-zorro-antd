@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, Location } from '@angular/common';
 import { Component, ElementRef, Inject, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -92,7 +92,7 @@ export class NzCodeBoxComponent implements OnInit {
   }
 
   navigateToFragment() {
-    window.location.hash = this.nzLink;
+    this.location.go(`#${this.nzLink}`);
   }
 
   copyCode(code) {
@@ -399,7 +399,14 @@ export class AppModule { }
     });
   }
 
-  constructor(@Inject(DOCUMENT) private dom: any, private sanitizer: DomSanitizer, private _el: ElementRef, private activatedRoute: ActivatedRoute, private router: Router) {
+  constructor(
+    @Inject(DOCUMENT) private dom: Document,
+    private sanitizer: DomSanitizer,
+    private _el: ElementRef,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private location: Location
+  ) {
 
   }
 

@@ -4,7 +4,7 @@ import {
   Component,
   ContentChildren,
   ElementRef,
-  HostBinding,
+  HostBinding, Inject,
   Input,
   NgZone,
   OnDestroy,
@@ -19,6 +19,7 @@ import { filterNotEmptyNode, isEmpty } from '../core/util/check';
 import { toBoolean } from '../core/util/convert';
 import { NzWaveDirective } from '../core/wave/nz-wave.directive';
 import { NzIconDirective } from '../icon/nz-icon.directive';
+import { DOCUMENT } from '@angular/common';
 
 export type NzButtonType = 'primary' | 'dashed' | 'danger';
 export type NzButtonShape = 'circle' | null ;
@@ -117,7 +118,7 @@ export class NzButtonComponent implements AfterContentInit, OnInit, OnDestroy {
     return this._loading;
   }
 
-  @HostBinding('attr.nz-wave') nzWave = new NzWaveDirective(this.ngZone, this.elementRef);
+  @HostBinding('attr.nz-wave') nzWave = new NzWaveDirective(this.ngZone, this.elementRef, this.document);
 
   updateIconDisplay(value: boolean): void {
     if (this.iconElement) {
@@ -194,7 +195,14 @@ export class NzButtonComponent implements AfterContentInit, OnInit, OnDestroy {
     return null;
   }
 
-  constructor(private elementRef: ElementRef, private cdr: ChangeDetectorRef, private renderer: Renderer2, private nzUpdateHostClassService: NzUpdateHostClassService, private ngZone: NgZone) {
+  constructor(
+    private elementRef: ElementRef,
+    private cdr: ChangeDetectorRef,
+    private renderer: Renderer2,
+    private nzUpdateHostClassService: NzUpdateHostClassService,
+    private ngZone: NgZone,
+    @Inject(DOCUMENT) private document: Document
+  ) {
     this.el = this.elementRef.nativeElement;
     this.renderer.addClass(this.el, this.prefixCls);
   }

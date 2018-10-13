@@ -116,9 +116,12 @@ export class NzRowComponent implements OnInit {
 
   watchMedia(): void {
     Object.keys(responsiveMap).map((screen: Breakpoint) => {
-      const matchBelow = matchMedia(responsiveMap[ screen ]).matches;
-      if (matchBelow) {
-        this.breakPoint = screen;
+      const mediaQueryList = matchMedia(responsiveMap[screen]);
+      if (mediaQueryList) {
+        const matchBelow = mediaQueryList.matches;
+        if (matchBelow) {
+          this.breakPoint = screen;
+        }
       }
     });
     this.updateGutter();

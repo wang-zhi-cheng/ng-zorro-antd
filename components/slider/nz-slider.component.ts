@@ -10,7 +10,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  ViewChild
+  ViewChild, Inject
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { fromEvent, merge, Observable, Subscription } from 'rxjs';
@@ -20,6 +20,7 @@ import { toBoolean } from '../core/util/convert';
 
 import { Marks, MarksArray } from './nz-slider-marks.component';
 import { NzSliderService } from './nz-slider.service';
+import { DOCUMENT } from '@angular/common';
 
 export type SliderValue = number[] | number;
 
@@ -215,7 +216,7 @@ export class NzSliderComponent implements ControlValueAccessor, OnInit, OnChange
   // | Lifecycle hooks
   // |--------------------------------------------------------------------------------------------
 
-  constructor(private utils: NzSliderService) {
+  constructor(private utils: NzSliderService, @Inject(DOCUMENT) private document: Document) {
   }
 
   // initialize event binding, class init, etc. (called only once)
@@ -380,9 +381,9 @@ export class NzSliderComponent implements ControlValueAccessor, OnInit, OnChange
         map((position: number) => this.findClosestValue(position))
       );
       // end
-      source.end$ = fromEvent(document, end);
+      source.end$ = fromEvent(this.document, end);
       // resolve move
-      source.moveResolved$ = fromEvent(document, move).pipe(
+      source.moveResolved$ = fromEvent(this.document, move).pipe(
         filter(filterFunc),
         tap(this.utils.pauseEvent),
         pluck(...pluckKey),
