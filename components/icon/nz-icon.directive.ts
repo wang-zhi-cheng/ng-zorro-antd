@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { withSuffix, IconDirective } from '@ant-design/icons-angular';
 import { NzIconService } from './nz-icon.service';
+import { isBrowser } from '../core/util';
 
 /**
  * This directive extends IconDirective to provide:
@@ -35,6 +36,9 @@ export class NzIconDirective extends IconDirective implements OnInit, OnChanges,
    * Should be removed in next major version.
    */
   private _classChangeHandler(className: string): void {
+    if (!isBrowser()) {
+      return;
+    }
     if (!className) {
       return;
     }
@@ -109,6 +113,9 @@ export class NzIconDirective extends IconDirective implements OnInit, OnChanges,
   }
 
   ngOnChanges(): void {
+    if (!isBrowser()) {
+      return;
+    }
     if (!this.iconfont) {
       this._getIconNameBack(); // Should get back classNames immediately.
       this._changeIcon().then(svg => {
@@ -125,6 +132,9 @@ export class NzIconDirective extends IconDirective implements OnInit, OnChanges,
    * Subscribe to DOM element attribute change events, so when user use ngClass or something the icon changes with it.
    */
   ngOnInit(): void {
+    if (!isBrowser()) {
+      return;
+    }
     this._el = this._elementRef.nativeElement;
     if (this._el && !this.type) {
       this._warnAPI();
