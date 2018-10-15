@@ -17,6 +17,7 @@ import { shallowEqual } from '../core/util/check';
 import { toNumber } from '../core/util/convert';
 import { throttleByAnimationFrameDecorator } from '../core/util/throttleByAnimationFrame';
 import { DOCUMENT } from '@angular/common';
+import { isBrowser } from '../core/util/is-browser';
 
 @Component({
   selector       : 'nz-affix',
@@ -98,7 +99,7 @@ export class NzAffixComponent implements OnInit, OnDestroy {
 
   private setTargetEventListeners(): void {
     this.clearEventListeners();
-    if (typeof window === 'undefined') {
+    if (!isBrowser()) {
       return;
     }
     this.events.forEach((eventName: string) => {
@@ -107,7 +108,7 @@ export class NzAffixComponent implements OnInit, OnDestroy {
   }
 
   private clearEventListeners(): void {
-    if (typeof window === 'undefined') {
+    if (!isBrowser()) {
       return;
     }
     this.events.forEach(eventName => {
@@ -162,7 +163,7 @@ export class NzAffixComponent implements OnInit, OnDestroy {
   }
 
   private setAffixStyle(e: any, affixStyle: {}): void {
-    if (typeof window === 'undefined') {
+    if (!isBrowser()) {
       return;
     }
 
@@ -202,7 +203,7 @@ export class NzAffixComponent implements OnInit, OnDestroy {
 
   @throttleByAnimationFrameDecorator()
   updatePosition(e: any): void {
-    if (typeof window === 'undefined') {
+    if (!isBrowser()) {
       return;
     }
     const targetNode = this._target || window;

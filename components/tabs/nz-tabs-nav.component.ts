@@ -28,6 +28,7 @@ const EXAGGERATED_OVERSCROLL = 64;
 export type ScrollDirection = 'after' | 'before';
 
 import { NzTabPositionMode } from './nz-tabset.component';
+import { isBrowser } from '../core/util';
 
 @Component({
   selector           : '[nz-tabs-nav]',
@@ -172,7 +173,7 @@ export class NzTabsNavComponent implements AfterContentChecked, AfterContentInit
   ngAfterContentInit(): void {
     this.realignInkBar = this.ngZone.runOutsideAngular(() => {
       const dirChange = this.dir ? this.dir.change : observableOf(null);
-      const resize = typeof window !== 'undefined' ?
+      const resize = isBrowser() ?
         fromEvent(window, 'resize').pipe(auditTime(10)) :
         observableOf(null);
       return merge(dirChange, resize).pipe(startWith(null)).subscribe(() => {

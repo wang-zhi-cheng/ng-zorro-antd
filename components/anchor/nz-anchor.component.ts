@@ -18,6 +18,7 @@ import { NzScrollService } from '../core/scroll/nz-scroll.service';
 import { toBoolean, toNumber } from '../core/util/convert';
 
 import { NzAnchorLinkComponent } from './nz-anchor-link.component';
+import { isBrowser } from '../core/util';
 
 interface Section {
   comp: NzAnchorLinkComponent;
@@ -117,7 +118,7 @@ export class NzAnchorComponent implements OnDestroy, AfterViewInit {
   }
 
   private getTarget(): Element | Window {
-    if (typeof window === 'undefined') {
+    if (!isBrowser()) {
       return undefined;
     }
     return this.target || window;
@@ -132,7 +133,7 @@ export class NzAnchorComponent implements OnDestroy, AfterViewInit {
   }
 
   private registerScrollEvent(): void {
-    if (typeof window === 'undefined') {
+    if (!isBrowser()) {
       return;
     }
     this.removeListen();

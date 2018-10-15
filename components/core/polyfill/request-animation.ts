@@ -1,4 +1,6 @@
 // tslint:disable:no-any typedef no-invalid-this
+import { isBrowser } from '../util';
+
 const availablePrefixs = ['moz', 'ms', 'webkit'];
 
 function requestAnimationFramePolyfill(): typeof requestAnimationFrame {
@@ -13,7 +15,7 @@ function requestAnimationFramePolyfill(): typeof requestAnimationFrame {
 }
 
 function getRequestAnimationFrame(): typeof requestAnimationFrame {
-  if (typeof window === 'undefined') {
+  if (!isBrowser()) {
     return () => null;
   }
   if (window.requestAnimationFrame) {
@@ -29,7 +31,7 @@ function getRequestAnimationFrame(): typeof requestAnimationFrame {
 }
 
 export function cancelRequestAnimationFrame(id: number): any {
-  if (typeof window === 'undefined') {
+  if (!isBrowser()) {
     return null;
   }
   if (window.cancelAnimationFrame) {

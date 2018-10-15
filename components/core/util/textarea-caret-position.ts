@@ -4,6 +4,8 @@
 // Note that some browsers, such as Firefox, do not concatenate properties
 // into their shorthand (e.g. padding-top, padding-bottom etc. -> padding),
 // so we have to list every single property explicitly.
+import { isBrowser } from './is-browser';
+
 export const properties = [
   'direction',  // RTL support
   'boxSizing',
@@ -46,10 +48,8 @@ export const properties = [
 
 ];
 
-const isBrowser = (typeof window !== 'undefined');
-
 // tslint:disable-next-line:no-any
-const isFirefox = (isBrowser && (window as any).mozInnerScreenX != null);
+const isFirefox = (isBrowser() && (window as any).mozInnerScreenX != null);
 
 const _parseInt = (str: string) => parseInt(str, 10);
 
@@ -60,7 +60,7 @@ export interface Coordinates {
 }
 
 export function getCaretCoordinates(element: HTMLInputElement | HTMLTextAreaElement, position: number, options?: { debug?: boolean }): Coordinates {
-  if (!isBrowser) {
+  if (!isBrowser()) {
     throw new Error('textarea-caret-position#getCaretCoordinates should only be called in a browser');
   }
 

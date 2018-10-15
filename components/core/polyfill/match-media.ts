@@ -1,5 +1,7 @@
+import { isBrowser } from '../util';
+
 function matchMediaFunc(): (mediaQuery: string) => MediaQueryList {
-  if (typeof window === 'undefined') {
+  if (!isBrowser()) {
     return () => null;
   }
   if (window.matchMedia) {
