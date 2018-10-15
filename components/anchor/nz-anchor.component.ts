@@ -132,6 +132,9 @@ export class NzAnchorComponent implements OnDestroy, AfterViewInit {
   }
 
   private registerScrollEvent(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
     this.removeListen();
     this.scroll$ = fromEvent(this.getTarget(), 'scroll').pipe(throttleTime(50), distinctUntilChanged())
     .subscribe(e => this.handleScroll());
